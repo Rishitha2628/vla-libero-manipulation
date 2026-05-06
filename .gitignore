@@ -2,3 +2,4 @@ __pycache__/
 *.pyc
 *.pkl
 *.hdf5
+model_final/*/model.safetensors
