@@ -3,6 +3,11 @@
 ACT (Action Chunking Transformer) policy trained on the LIBERO-Object benchmark,
 with a closed-loop success-rate evaluation in MuJoCo.
 
+**Trained weights:** [rishi264/act-libero-alphabet-soup](https://huggingface.co/rishi264/act-libero-alphabet-soup)
+on the Hugging Face Hub. Load them with the preprocessor and postprocessor, not on their
+own — the normalization lives in those pipelines, and without them the policy silently
+does nothing useful.
+
 ## Task
 Pick up the alphabet soup and place it in the basket.
 
@@ -105,6 +110,9 @@ docker build -t vla-libero:latest .
 
 LIBERO and LeRobot are mounted from `/home/rishi/LIBERO` and `/home/rishi/lerobot`;
 the converted dataset lands in `/home/rishi/lerobot_data/alphabet_soup`.
+
+To skip training and evaluate the published checkpoint instead, pass
+`--model-dir rishi264/act-libero-alphabet-soup` to `eval_policy.py`.
 
 ## Limitations
 - One task, one object; no generalization claims.

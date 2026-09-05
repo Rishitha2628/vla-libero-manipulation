@@ -56,9 +56,9 @@ def load_policy(model_dir, dataset_root=None, device="cuda", n_action_steps=None
     policy.to(device)
     policy.eval()
 
-    has_saved = os.path.exists(os.path.join(model_dir, f"{POLICY_PREPROCESSOR}.json"))
-    if has_saved:
-        print(f"[policy] loading saved processors from {model_dir}")
+    # model_dir may be a local directory or a Hub repo id, so ask for the processors
+    # and treat "not there" as the signal to rebuild them.
+    try:
         pre = PolicyProcessorPipeline.from_pretrained(
             pretrained_model_name_or_path=model_dir,
             config_filename=f"{POLICY_PREPROCESSOR}.json",
@@ -71,13 +71,15 @@ def load_policy(model_dir, dataset_root=None, device="cuda", n_action_steps=None
             to_transition=policy_action_to_transition,
             to_output=transition_to_policy_action,
         )
-    else:
+        print(f"[policy] loaded saved processors from {model_dir}")
+    except Exception as e:
         if dataset_root is None:
             raise SystemExit(
-                f"{model_dir} has no saved processors and no --dataset-root was given; "
-                "cannot reconstruct normalization stats."
-            )
-        print(f"[policy] no saved processors in {model_dir}; rebuilding stats from {dataset_root}")
+                f"{model_dir} has no saved processors and no --dataset-root was given, "
+                f"so normalization stats cannot be reconstructed ({type(e).__name__}: {e})"
+            ) from e
+        print(f"[policy] no saved processors in {model_dir} ({type(e).__name__}); "
+              f"rebuilding stats from {dataset_root}")
         from lerobot.datasets.dataset_metadata import LeRobotDatasetMetadata
         meta = LeRobotDatasetMetadata("local/libero_alphabet_soup", root=dataset_root)
         pre, post = make_act_pre_post_processors(config, dataset_stats=meta.stats)
