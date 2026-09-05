@@ -5,3 +5,4 @@ __pycache__/
 model_final/*/model.safetensors
 model_final/model.safetensors
 *_log.txt
+outputs/

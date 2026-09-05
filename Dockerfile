@@ -33,9 +33,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # --- Python deps (proven combo on py3.12) -----------------------------------
 # lerobot 0.5.1 pulls a GPU-enabled torch; the local lerobot 0.5.2 source is
 # mounted on PYTHONPATH at runtime so the exact trained-against code wins.
+# mujoco is pinned: robosuite 1.4.1's binding_utils.get_joint_qpos_addr asserts
+# on the mjtJoint enum in a way that breaks from mujoco 3.10 onward.
 RUN pip install --no-cache-dir \
     "lerobot==0.5.1" \
     "robosuite==1.4.1" \
+    "mujoco==3.9.0" \
     bddl easydict transforms3d "gym==0.25.2" \
     hydra-core matplotlib imageio imageio-ffmpeg h5py \
     && rm -rf /root/.cache/pip

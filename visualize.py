@@ -16,11 +16,10 @@ seed_libero_config()
 
 from libero.libero import benchmark, get_libero_path
 from libero.libero.envs.env_wrapper import ControlEnv
-import robosuite.utils.transform_utils as T
 
 TASK_SUITE = "libero_object"
 TASK_MATCH = "alphabet_soup"
-IMG = 256
+IMG = 128  # must match the training resolution (native LIBERO)
 
 
 def make_env(window):
@@ -81,35 +80,17 @@ def run_demo(env, bm, task_id, window, max_steps, fps, hold):
     f.close()
 
 
-def build_obs(obs, device):
+def run_policy(env, bm, task_id, window, max_steps, model_dir, fps, hold,
+               dataset_root, flip_images, n_action_steps, temporal_ensemble,
+               dummy_steps):
     import torch
-    # Match training exactly: convert_libero_to_lerobot.py used the raw hdf5
-    # agentview_rgb / eye_in_hand_rgb with NO vertical flip, so feed them as-is.
-    ag = obs["agentview_image"]
-    eih = obs["robot0_eye_in_hand_image"]
-    def to_chw(img):
-        x = torch.from_numpy(np.ascontiguousarray(img)).float().permute(2, 0, 1) / 255.0
-        return x.unsqueeze(0).to(device)
-    state = np.concatenate([
-        obs["robot0_eef_pos"],
-        T.quat2axisangle(obs["robot0_eef_quat"]),
-        obs["robot0_gripper_qpos"],
-    ]).astype(np.float32)
-    st = torch.from_numpy(state).unsqueeze(0).to(device)
-    return {
-        "observation.images.image": to_chw(ag),
-        "observation.images.image2": to_chw(eih),
-        "observation.state": st,
-    }
-
-
-def run_policy(env, bm, task_id, window, max_steps, model_dir, fps, hold):
-    import torch
-    from lerobot.policies.act.modeling_act import ACTPolicy
+    from policy_runner import load_policy, predict_action
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"[policy] loading {model_dir} on {device}")
-    policy = ACTPolicy.from_pretrained(model_dir)
-    policy.to(device); policy.eval(); policy.reset()
+    policy, pre, post = load_policy(
+        model_dir, dataset_root=dataset_root, device=device,
+        n_action_steps=n_action_steps, temporal_ensemble_coeff=temporal_ensemble,
+    )
 
     # Load init states directly: LIBERO's helper uses torch.load with the new
     # weights_only=True default, which rejects the NumPy-pickled .pruned_init file.
@@ -119,13 +100,14 @@ def run_policy(env, bm, task_id, window, max_steps, model_dir, fps, hold):
     init_states = torch.load(init_path, weights_only=False)
     env.reset()
     obs = env.set_init_state(init_states[0])
+    # Let the scene settle before the policy takes over, as LIBERO's eval does.
+    for _ in range(dummy_steps):
+        obs, _, _, _ = env.step([0.0] * 6 + [-1.0])
+    policy.reset()
     hold_window(env, window, 2)  # brief pause so the window is easy to spot
     success = False
     for t in range(max_steps):
-        batch = build_obs(obs, device)
-        with torch.inference_mode():
-            action = policy.select_action(batch)
-        action = action.squeeze(0).cpu().numpy().astype(np.float32)
+        action = predict_action(policy, pre, post, obs, flip_images)
         obs, reward, done, info = env.step(action)
         render(env, window)
         if window:
@@ -146,6 +128,12 @@ def main():
     ap.add_argument("--model-dir", default="/workspace/proj/model_final")
     ap.add_argument("--fps", type=float, default=30, help="playback speed (live window)")
     ap.add_argument("--hold", type=float, default=5, help="seconds to keep window open at end")
+    ap.add_argument("--dataset-root", default="/workspace/data/alphabet_soup",
+                    help="only needed for checkpoints saved without processors")
+    ap.add_argument("--flip-images", action="store_true")
+    ap.add_argument("--n-action-steps", type=int, default=None)
+    ap.add_argument("--temporal-ensemble", type=float, default=None)
+    ap.add_argument("--dummy-steps", type=int, default=10)
     args = ap.parse_args()
     window = not args.no_window
     print(f"[init] mode={args.mode} window={window} MUJOCO_GL={os.environ.get('MUJOCO_GL')}")
@@ -154,7 +142,9 @@ def main():
     if args.mode == "demo":
         run_demo(env, bm, task_id, window, args.max_steps, args.fps, args.hold)
     else:
-        run_policy(env, bm, task_id, window, args.max_steps, args.model_dir, args.fps, args.hold)
+        run_policy(env, bm, task_id, window, args.max_steps, args.model_dir, args.fps,
+                   args.hold, args.dataset_root, args.flip_images, args.n_action_steps,
+                   args.temporal_ensemble, args.dummy_steps)
     env.close()
     print("DONE")
 

@@ -1,0 +1,316 @@
+{
+  "label": "chunked_10k",
+  "model_dir": "/workspace/proj/outputs/act_chunked/checkpoint_10000",
+  "episodes": 50,
+  "successes": 45,
+  "success_rate": 0.9,
+  "mean_steps_to_success": 142.48888888888888,
+  "max_steps": 600,
+  "dummy_steps": 10,
+  "n_action_steps": 50,
+  "temporal_ensemble_coeff": null,
+  "flip_images": false,
+  "elapsed_min": 5.008043960730235,
+  "results": [
+    {
+      "episode": 0,
+      "init_state": 0,
+      "success": true,
+      "steps": 140
+    },
+    {
+      "episode": 1,
+      "init_state": 1,
+      "success": true,
+      "steps": 139
+    },
+    {
+      "episode": 2,
+      "init_state": 2,
+      "success": true,
+      "steps": 141
+    },
+    {
+      "episode": 3,
+      "init_state": 3,
+      "success": true,
+      "steps": 144
+    },
+    {
+      "episode": 4,
+      "init_state": 4,
+      "success": true,
+      "steps": 141
+    },
+    {
+      "episode": 5,
+      "init_state": 5,
+      "success": true,
+      "steps": 154
+    },
+    {
+      "episode": 6,
+      "init_state": 6,
+      "success": true,
+      "steps": 146
+    },
+    {
+      "episode": 7,
+      "init_state": 7,
+      "success": true,
+      "steps": 139
+    },
+    {
+      "episode": 8,
+      "init_state": 8,
+      "success": true,
+      "steps": 132
+    },
+    {
+      "episode": 9,
+      "init_state": 9,
+      "success": true,
+      "steps": 140
+    },
+    {
+      "episode": 10,
+      "init_state": 10,
+      "success": true,
+      "steps": 146
+    },
+    {
+      "episode": 11,
+      "init_state": 11,
+      "success": true,
+      "steps": 139
+    },
+    {
+      "episode": 12,
+      "init_state": 12,
+      "success": true,
+      "steps": 143
+    },
+    {
+      "episode": 13,
+      "init_state": 13,
+      "success": true,
+      "steps": 141
+    },
+    {
+      "episode": 14,
+      "init_state": 14,
+      "success": true,
+      "steps": 139
+    },
+    {
+      "episode": 15,
+      "init_state": 15,
+      "success": true,
+      "steps": 139
+    },
+    {
+      "episode": 16,
+      "init_state": 16,
+      "success": true,
+      "steps": 131
+    },
+    {
+      "episode": 17,
+      "init_state": 17,
+      "success": false,
+      "steps": 600
+    },
+    {
+      "episode": 18,
+      "init_state": 18,
+      "success": true,
+      "steps": 154
+    },
+    {
+      "episode": 19,
+      "init_state": 19,
+      "success": true,
+      "steps": 151
+    },
+    {
+      "episode": 20,
+      "init_state": 20,
+      "success": true,
+      "steps": 142
+    },
+    {
+      "episode": 21,
+      "init_state": 21,
+      "success": false,
+      "steps": 600
+    },
+    {
+      "episode": 22,
+      "init_state": 22,
+      "success": true,
+      "steps": 136
+    },
+    {
+      "episode": 23,
+      "init_state": 23,
+      "success": false,
+      "steps": 600
+    },
+    {
+      "episode": 24,
+      "init_state": 24,
+      "success": true,
+      "steps": 142
+    },
+    {
+      "episode": 25,
+      "init_state": 25,
+      "success": true,
+      "steps": 133
+    },
+    {
+      "episode": 26,
+      "init_state": 26,
+      "success": true,
+      "steps": 142
+    },
+    {
+      "episode": 27,
+      "init_state": 27,
+      "success": true,
+      "steps": 176
+    },
+    {
+      "episode": 28,
+      "init_state": 28,
+      "success": true,
+      "steps": 175
+    },
+    {
+      "episode": 29,
+      "init_state": 29,
+      "success": true,
+      "steps": 150
+    },
+    {
+      "episode": 30,
+      "init_state": 30,
+      "success": true,
+      "steps": 144
+    },
+    {
+      "episode": 31,
+      "init_state": 31,
+      "success": true,
+      "steps": 131
+    },
+    {
+      "episode": 32,
+      "init_state": 32,
+      "success": true,
+      "steps": 138
+    },
+    {
+      "episode": 33,
+      "init_state": 33,
+      "success": true,
+      "steps": 144
+    },
+    {
+      "episode": 34,
+      "init_state": 34,
+      "success": false,
+      "steps": 600
+    },
+    {
+      "episode": 35,
+      "init_state": 35,
+      "success": true,
+      "steps": 150
+    },
+    {
+      "episode": 36,
+      "init_state": 36,
+      "success": true,
+      "steps": 132
+    },
+    {
+      "episode": 37,
+      "init_state": 37,
+      "success": true,
+      "steps": 133
+    },
+    {
+      "episode": 38,
+      "init_state": 38,
+      "success": true,
+      "steps": 134
+    },
+    {
+      "episode": 39,
+      "init_state": 39,
+      "success": true,
+      "steps": 129
+    },
+    {
+      "episode": 40,
+      "init_state": 40,
+      "success": true,
+      "steps": 139
+    },
+    {
+      "episode": 41,
+      "init_state": 41,
+      "success": true,
+      "steps": 130
+    },
+    {
+      "episode": 42,
+      "init_state": 42,
+      "success": true,
+      "steps": 165
+    },
+    {
+      "episode": 43,
+      "init_state": 43,
+      "success": true,
+      "steps": 140
+    },
+    {
+      "episode": 44,
+      "init_state": 44,
+      "success": false,
+      "steps": 600
+    },
+    {
+      "episode": 45,
+      "init_state": 45,
+      "success": true,
+      "steps": 141
+    },
+    {
+      "episode": 46,
+      "init_state": 46,
+      "success": true,
+      "steps": 153
+    },
+    {
+      "episode": 47,
+      "init_state": 47,
+      "success": true,
+      "steps": 141
+    },
+    {
+      "episode": 48,
+      "init_state": 48,
+      "success": true,
+      "steps": 132
+    },
+    {
+      "episode": 49,
+      "init_state": 49,
+      "success": true,
+      "steps": 141
+    }
+  ]
+}

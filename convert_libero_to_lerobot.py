@@ -1,5 +1,6 @@
 import h5py
 import numpy as np
+import shutil
 from pathlib import Path
 from lerobot.datasets.lerobot_dataset import LeRobotDataset
 import cv2
@@ -7,9 +8,9 @@ import cv2
 HDF5_PATH = "/workspace/LIBERO/libero/datasets/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_demo.hdf5"
 TASK_NAME = "pick_up_the_alphabet_soup_and_place_it_in_the_basket"
 REPO_ID = "local/libero_alphabet_soup"
-OUTPUT_DIR = Path("/workspace/lerobot_dataset")
+OUTPUT_DIR = Path("/workspace/data/alphabet_soup")
 FPS = 30
-IMG_SIZE = 256
+IMG_SIZE = 128  # native LIBERO resolution; upscaling to 256 only blurred the data
 
 f = h5py.File(HDF5_PATH, 'r')
 demo0 = f['data']['demo_0']
@@ -19,6 +20,10 @@ gripper = demo0['obs']['gripper_states'][0]
 state_dim = len(ee_pos) + len(ee_ori) + len(gripper)
 print(f"state_dim: {state_dim}")
 f.close()
+
+# LeRobotDataset.create insists the directory does not exist yet.
+if OUTPUT_DIR.exists():
+    shutil.rmtree(OUTPUT_DIR)
 
 dataset = LeRobotDataset.create(
     repo_id=REPO_ID,
@@ -57,4 +62,11 @@ for demo_key in list(f['data'].keys()):
 
 f.close()
 dataset.finalize()
+
+# LeRobot's image stats come out as the std of each frame's mean pixel rather
+# than the std across pixels, which makes MEAN_STD normalization explode.
+# Rewrite them with true per-pixel values before anything trains on this.
+import subprocess, sys as _sys
+subprocess.run([_sys.executable, str(Path(__file__).parent / "fix_image_stats.py"),
+                "--root", str(OUTPUT_DIR)], check=True)
 print("Done!")
